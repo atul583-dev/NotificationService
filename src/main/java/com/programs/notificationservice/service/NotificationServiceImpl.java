@@ -1,5 +1,6 @@
 package com.programs.notificationservice.service;
 
+import com.programs.notificationservice.model.ContactUs;
 import com.programs.notificationservice.model.Notification;
 import com.twilio.Twilio;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,23 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Value("${twilio.phonenumber}")
     private String phoneNumber;
+
+    @Value("${email.subject}")
+    private String clientEmailSubject;
+
+    @Value("${email.content}")
+    private String clientEmailContent;
+
+    @Value("${zupright.email}")
+    private String zuprightEmailId;
+
+    @Value("${zupright.email.subject}")
+    private String zuprightEmailSubject;
+
+    @Value("${zupright.email.content}")
+    private String zuprightEmailContent;
+
+
 
     @Override
     public void sendEmail(Notification notification) {
@@ -86,6 +104,57 @@ public class NotificationServiceImpl implements NotificationService {
                     .create();
 
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void contactUs(ContactUs contactUs) {
+
+        Properties props = new Properties();
+        props.put(smtpAuth, "true");
+        props.put(starttlsStatus, "true");
+        props.put(smtpHost, "smtp.gmail.com");
+        props.put(smtpPort, "587");
+
+        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(emailUsername, emailPassword);
+            }
+        });
+
+        sendEmailToCustomer(session, contactUs);
+
+        sendEmailToZupright(session, contactUs);
+    }
+
+    private void sendEmailToCustomer(Session session, ContactUs contactUs) {
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(emailUsername));
+            message.setRecipients(Message.RecipientType.TO,
+                    InternetAddress.parse(contactUs.getEmailId()));
+            message.setSubject(clientEmailSubject);
+            message.setText(clientEmailContent);
+
+            Transport.send(message);
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendEmailToZupright(Session session, ContactUs contactUs) {
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(emailUsername));
+            message.setRecipients(Message.RecipientType.TO,
+                    InternetAddress.parse(zuprightEmailId));
+            message.setSubject(zuprightEmailSubject);
+            message.setText(contactUs.toString());
+            Transport.send(message);
+
+        } catch (MessagingException e) {
             e.printStackTrace();
         }
     }
