@@ -1,6 +1,8 @@
 package com.programs.notificationservice.controller;
 
+import com.programs.notificationservice.dto.ContactUsDto;
 import com.programs.notificationservice.dto.NotificationDto;
+import com.programs.notificationservice.model.ContactUs;
 import com.programs.notificationservice.model.Notification;
 import com.programs.notificationservice.service.NotificationService;
 import com.programs.notificationservice.utils.mapper.NotificationMapper;
@@ -46,4 +48,24 @@ public class NotificationController {
         }
     }
 
+    @PostMapping("/contactUs")
+    public ResponseEntity<String> contactUs(@RequestBody ContactUsDto contactUsDto) {
+
+        if (contactUsDto == null || contactUsDto.getEmailId() == null
+                || contactUsDto.getEmailId().isEmpty()) {
+            throw new IllegalArgumentException("Request doesn't contain necessary fields. Failed to process notification.");
+        }
+
+        try {
+            ContactUs contactUs = NotificationMapper.fromContactUsDto(contactUsDto);
+
+            notificationService.contactUs(contactUs);
+
+            return ResponseEntity.ok("Notification sent successfully");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process notification: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+        }
+    }
 }
