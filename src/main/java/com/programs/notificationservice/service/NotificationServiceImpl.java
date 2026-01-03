@@ -64,10 +64,10 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendEmail(Notification notification) {
 
         Properties props = new Properties();
-        props.put(smtpAuth, "true");
-        props.put(starttlsStatus, "true");
-        props.put(smtpHost, "smtp.gmail.com");
-        props.put(smtpPort, "587");
+        props.put("mail.smtp.host", "smtppro.zoho.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
 
         Session session = Session.getInstance(props, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -112,10 +112,10 @@ public class NotificationServiceImpl implements NotificationService {
     public void contactUs(ContactUs contactUs) {
 
         Properties props = new Properties();
-        props.put(smtpAuth, "true");
-        props.put(starttlsStatus, "true");
-        props.put(smtpHost, "smtp.gmail.com");
-        props.put(smtpPort, "587");
+        props.put("mail.smtp.host", "smtppro.zoho.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
 
         Session session = Session.getInstance(props, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
